@@ -1,97 +1,96 @@
+# Daraz Price Tracker API
 
-# Darazscrape Api
+Welcome to the Daraz Price Tracker API! This API allows you to track the prices of products listed on daraz.com.np with ease. Utilizing Django Rest Framework, Celery, Redis, and Django-Rest-Knox, it provides a seamless experience for price monitoring and user authentication.
 
-This is a REST api made with django Rest Framework that tracks the prices of the products in daraz.com.np. This api uses Django Rest framework for serialization of input and output to transfer through the API endpoint.
+## Features
 
-It uses Celery-Beat in order to periodically update and track the prices of the products and flag them inactive if they're not tracked by any User. Redis server has been used as a backend for Celery worker.
-
-Django-Rest-Knox has been used for authentication.
+- Track prices of products on daraz.com.np
+- Periodic updates and tracking of prices
+- User authentication using Django-Rest-Knox
+- Interactive API endpoints for easy integration
 
 ## API Reference
+
+### Authentication
 
 #### Login
 
 ```http
-   POST /api/login
+POST /api/login
 ```
 
-| key | Type     | Description                |
+| Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `email` | `string` | **Required**. Email of the User|
-| `password` | `string` | **Required**. Password |
+| `email`   | `string` | **Required**. User's email|
+| `password`| `string` | **Required**. User's password |
 
 #### Register
 
 ```http
-  POST /api/register
+POST /api/register
 ```
 
-| key | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `email` | `string` | **Required**. Email of the User|
-| `password` | `string` | **Required**. Password |
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `email`   | `string` | **Required**. User's email|
+| `password`| `string` | **Required**. User's password |
 
-### Authorization
-Authtoken are returned in response during Login or Registration. These need to be send as header in the following format 
+### User Operations
 
-| key | value   | 
-| :-------- | :------- | 
-| `Authorization` | `Token {Auth Token Provided in Response}` | 
-
-So if the Authtoken is `abcd` then the value of `Authorization` should be `Token abcd` 
-
-Endpoints provided below require authorization through authtoken to be accessed.
-
+Endpoints below require authentication through an auth token.
 
 #### Logout
 
 ```http
-  POST /api/logout
+POST /api/logout
 ```
 
-#### Retrieve User 
+#### Retrieve User
 
 ```http
-  GET /api/user 
+GET /api/user
 ```
 
-#### Add product
+### Product Operations
+
+#### Add Product
 
 ```http
-  POST /api/products/create
+POST /api/products/create
 ```
 
-| key | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `url` | `string` | **Required**. Url of the Daraz Product to be added|
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `url`     | `string` | **Required**. URL of the product on daraz.com.np|
 
 #### Delete Product
 
 ```http
-  POST /api/products/delete 
+POST /api/products/delete 
 ```
 
-| key | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `productId` | `integer` | **Required**. Product Id of the product being deleted|
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `productId`| `integer`| **Required**. Product ID of the product being deleted|
 
 ### Response Format
 
-#### User 
+#### User
 
 ```yaml
 {
-  id : userId,
+  id: userId,
   email: userEmail,
-  products : [
-     {
-      id : productId,
-      title : productTitle,
-      url : productUrl,
-      image_url : productImageUrl,
+  products: [
+    {
+      id: productId,
+      title: productTitle,
+      url: productUrl,
+      image_url: productImageUrl,
       prices: [
-        { date : dateWhenThisPriceWasTracked,
-          price : price
+        {
+          date: dateWhenThisPriceWasTracked,
+          price: price
         },
         ...
       ]
@@ -99,85 +98,87 @@ Endpoints provided below require authorization through authtoken to be accessed.
     ...
   ]
 }
- 
 ```
 
 #### Login
 
 ```yaml
- {
-   expiry : expiryDateofToken,
-   token : authToken,
-   user : UserObject
- }
+{
+  expiry: expiryDateofToken,
+  token: authToken,
+  user: UserObject
+}
 ```
 
 #### Register
 
 ```yaml
-  {
-    user : UserObject,
-    token : authToken
-  }
+{
+  user: UserObject,
+  token: authToken
+}
 ```
 
 #### Create Product
 
 ```yaml
-  {
-     id : productId,
-     title : productTitle,
-     url : productUrl,
-     image_url : productImageUrl,
-     prices: [
-       { date : dateWhenThisPriceWasTracked,
-         price : price
-       },
-       ...
-     ]
-  }
+{
+  id: productId,
+  title: productTitle,
+  url: productUrl,
+  image_url: productImageUrl,
+  prices: [
+    {
+      date: dateWhenThisPriceWasTracked,
+      price: price
+    },
+    ...
+  ]
+}
 ```
 
+## Getting Started
 
-## Run Locally
-
-Clone the project
+1. Clone the project
 
 ```bash
-  git clone https://github.com/yubint/darazscrape-api
+git clone https://github.com/Aayush518/darazPriceTracker
 ```
 
-Go to the project directory
+2. Navigate to the project directory
 
 ```bash
-  cd darazscarape-api
+cd darazscarape-api
 ```
 
-Install requirements.txt
+3. Install requirements
 
 ```bash
-  pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-Start the Django server
+4. Start the Django server
 
 ```bash
-  python manage.py runserver
+python manage.py runserver
 ```
 
-Start redis server
+5. Start Redis server
+
 ```bash
-  sudo service redis-server start
+sudo service redis-server start
 ```
 
-Start celery backend
+6. Start Celery worker
+
 ```bash
-  celery -A backend worker -l INFO
+celery -A backend worker -l INFO
 ```
 
-Start Celery Beat Scheduler
+7. Start Celery Beat Scheduler
+
 ```bash
-  celery -A backend beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+celery -A backend beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
 
-
+Now you're ready to use the Daraz Price Tracker API! Enjoy tracking prices effortlessly.
