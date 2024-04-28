@@ -1,6 +1,6 @@
 # Daraz Price Tracker API
 
-Welcome to the Daraz Price Tracker API! This API allows you to track the prices of products listed on daraz.com.np with ease. Utilizing Django Rest Framework, Celery, Redis, and Django-Rest-Knox, it provides a seamless experience for price monitoring and user authentication.
+This API allows you to track the prices of products listed on daraz.com.np with ease. Utilizing Django Rest Framework, Celery, Redis, and Django-Rest-Knox, it provides a seamless experience for price monitoring and user authentication.
 
 ## Features
 
